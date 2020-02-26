@@ -939,6 +939,8 @@ CONTAINS
               test_name = 'CH3COCHO'
           case( 'HAC' )
               test_name = 'HYAC'
+          case( 'HNO4' )
+             test_name = 'HO2NO2'
           case( 'GLYC' )
               test_name = 'GLYALD'
           case( 'ACTA' )
