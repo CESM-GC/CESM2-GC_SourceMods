@@ -38,7 +38,8 @@ module seq_drydep_mod
   integer, private, parameter :: maxspc = 100              ! Maximum number of species
   integer, public,  parameter :: n_species_table = 132     ! Number of species to work with
   integer, private, parameter :: NSeas = 5                 ! Number of seasons
-  integer, private, parameter :: NLUse = 11                ! Number of land-use types
+  integer, public,  parameter :: NLUse = 11                ! Number of land-use types
+  integer, public,  parameter :: NPatch = 80               ! Number of patch types
 
   ! !PUBLIC DATA MEMBERS:
 
@@ -55,6 +56,8 @@ module seq_drydep_mod
   character(len=32), public, dimension(maxspc) :: drydep_list = ''   ! List of dry-dep species
 
   character(len=CS), public :: drydep_fields_token = ''   ! First drydep fields token
+  character(len=CS), public :: luse_fields_token = ''     ! First landunit fields token
+  character(len=CS), public :: patch_fields_token = ''    ! First patch fields token
 
   real(r8), public, allocatable, dimension(:) :: foxd      ! reactivity factor for oxidation (dimensioness)
   real(r8), public, allocatable, dimension(:) :: drat      ! ratio of molecular diffusivity (D_H2O/D_species; dimensionless)
@@ -766,6 +769,20 @@ CONTAINS
        endif
        n_drydep = n_drydep+1
     enddo
+    do i=1,NLUse
+        write(token,334) i
+        seq_drydep_fields = trim(seq_drydep_fields)//':'//trim(token)
+        if ( i == 1 ) then
+            luse_fields_token = trim(token)
+        endif
+    enddo
+    do i=1,NPatch
+        write(token,335) i
+        seq_drydep_fields = trim(seq_drydep_fields)//':'//trim(token)
+        if ( i == 1 ) then
+            patch_fields_token = trim(token)
+        endif
+    enddo
 
     !--- Make sure method is valid and determine if land is passing drydep fields ---
     lnd_drydep = n_drydep>0 .and. drydep_method == DD_XLND
@@ -793,6 +810,8 @@ CONTAINS
 
     ! Need to explicitly add Sl_ based on naming convention
 333 format ('Sl_dd',i3.3)
+334 format ('Sl_lu',i3.3)
+335 format ('Sl_pa',i3.3)
 
   end subroutine seq_drydep_readnl
 
@@ -873,7 +892,7 @@ CONTAINS
              test_name = 'HNO3'
           case( 'ALKOOH', 'MEKOOH', 'TOLOOH', 'BENOOH', 'XYLOOH', 'SOGM','SOGI','SOGT','SOGB','SOGX' )
              test_name = 'CH3OOH'
-          case( 'SOA', 'SO4', 'CB1', 'CB2', 'OC1', 'OC2', 'NH3', 'NH4', 'SA1', 'SA2', 'SA3', 'SA4','HCN','CH3CN' )
+          case( 'SOA', 'SO4', 'CB1', 'CB2', 'OC1', 'OC2', 'NH3', 'SA1', 'SA2', 'SA3', 'SA4','HCN','CH3CN' )
              test_name = 'OX'  ! this is just a place holder. values are explicitly set below
           case( 'SOAM', 'SOAI', 'SOAT', 'SOAB', 'SOAX' )
              test_name = 'OX'  ! this is just a place holder. values are explicitly set below
@@ -955,12 +974,26 @@ CONTAINS
               test_name = 'CH3OOH'
           case( 'IEPOXA', 'IEPOXB', 'IEPOXD' )
               test_name = 'IEPOX'
+          case( 'DST1', 'DSTAL1', 'NITD1', 'SO4D1' )
+              test_name = 'DST1'
+          case( 'DST2', 'DSTAL2', 'NITD2', 'SO4D2' )
+              test_name = 'DST2'
+          case( 'DST3', 'DSTAL3', 'NITD3', 'SO4D3' )
+              test_name = 'DST3'
+          case( 'DST4', 'DSTAL4', 'NITD4', 'SO4D4' )
+              test_name = 'DST4'
+          case( 'ASOA1', 'ASOA2', 'ASOA3', 'ASOAN' )
+              test_name = 'ASOA'
           case( 'ASOG1', 'ASOG2', 'ASOG3' )
               test_name = 'ASOG'
+          case( 'OPOA1', 'OPOA2' )
+              test_name = 'OPOA'
           case( 'OPOG1', 'OPOG2' )
               test_name = 'OPOG'
           case( 'POG1', 'POG2' )
               test_name = 'POG'
+          case( 'TSOA0', 'TSOA1', 'TSOA2', 'TSOA3' )
+              test_name = 'TSOA'
           case( 'TSOG0', 'TSOG1', 'TSOG2', 'TSOG3' )
               test_name = 'TSOG'
           case default
