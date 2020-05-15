@@ -58,6 +58,7 @@ module seq_drydep_mod
   character(len=CS), public :: drydep_fields_token = ''   ! First drydep fields token
   character(len=CS), public :: luse_fields_token = ''     ! First landunit fields token
   character(len=CS), public :: patch_fields_token = ''    ! First patch fields token
+  character(len=CS), public :: lai_fields_token = ''      ! First lai fields token
 
   real(r8), public, allocatable, dimension(:) :: foxd      ! reactivity factor for oxidation (dimensioness)
   real(r8), public, allocatable, dimension(:) :: drat      ! ratio of molecular diffusivity (D_H2O/D_species; dimensionless)
@@ -783,6 +784,13 @@ CONTAINS
             patch_fields_token = trim(token)
         endif
     enddo
+    do i=1,NPatch
+        write(token,336) i
+        seq_drydep_fields = trim(seq_drydep_fields)//':'//trim(token)
+        if ( i == 1 ) then
+            lai_fields_token = trim(token)
+        endif
+    enddo
 
     !--- Make sure method is valid and determine if land is passing drydep fields ---
     lnd_drydep = n_drydep>0 .and. drydep_method == DD_XLND
@@ -812,6 +820,7 @@ CONTAINS
 333 format ('Sl_dd',i3.3)
 334 format ('Sl_lu',i3.3)
 335 format ('Sl_pa',i3.3)
+336 format ('Sl_la',i3.3)
 
   end subroutine seq_drydep_readnl
 
