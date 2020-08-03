@@ -570,8 +570,8 @@ module seq_drydep_mod
        ,'SVOCbb  '                       &
        ,'SVOCff  '                       &
        ,'ACET    '                       & ! GEOS-Chem species starting here
-       ,'ACTA    '                       &
-       ,'AERI    '                       &
+       ,'ACTA    '                       & ! Species that are found twice in
+       ,'AERI    '                       & ! this list are prepended with GC_
        ,'ALD2    '                       &
        ,'ASOA    '                       &
        ,'ASOG    '                       &
@@ -587,7 +587,7 @@ module seq_drydep_mod
        ,'BrNO3   '                       &
        ,'BrSALA  '                       &
        ,'BrSALC  '                       &
-       ,'CH2O    '                       &
+       ,'GC_CH2O '                       &
        ,'Cl2     '                       &
        ,'ClNO2   '                       &
        ,'ClNO3   '                       &
@@ -603,7 +603,7 @@ module seq_drydep_mod
        ,'ETP     '                       &
        ,'GLYC    '                       &
        ,'GLYX    '                       &
-       ,'H2O2    '                       &
+       ,'GC_H2O2 '                       &
        ,'HAC     '                       &
        ,'HBr     '                       &
        ,'HC5A    '                       &
@@ -615,7 +615,7 @@ module seq_drydep_mod
        ,'HI      '                       &
        ,'HMHP    '                       &
        ,'HMML    '                       &
-       ,'HNO3    '                       &
+       ,'GC_HNO3 '                       &
        ,'HOBr    '                       &
        ,'HOCl    '                       &
        ,'HOI     '                       &
@@ -687,11 +687,11 @@ module seq_drydep_mod
        ,'MVKHP   '                       &
        ,'MVKN    '                       &
        ,'MVKPC   '                       &
-       ,'N2O5    '                       &
-       ,'NH3     '                       &
+       ,'GC_N2O5 '                       &
+       ,'GC_NH3  '                       &
        ,'NIT     '                       &
        ,'NITs    '                       &
-       ,'NO2     '                       &
+       ,'GC_NO2  '                       &
        ,'NPRNO3  '                       &
        ,'O3      '                       &
        ,'OCPI    '                       &
@@ -700,7 +700,7 @@ module seq_drydep_mod
        ,'OPOA2   '                       &
        ,'OPOG1   '                       &
        ,'OPOG2   '                       &
-       ,'PAN     '                       &
+       ,'GC_PAN  '                       &
        ,'Pb210   '                       &
        ,'Pb210   '                       &
        ,'Pb210Strat'                     &
@@ -732,7 +732,7 @@ module seq_drydep_mod
        ,'SALC    '                       &
        ,'SALCAL  '                       &
        ,'SALCCL  '                       &
-       ,'SO2     '                       &
+       ,'GC_SO2  '                       &
        ,'SO4s    '                       &
        ,'SOAGX   '                       &
        ,'SOAIE   '                       &
@@ -1269,7 +1269,7 @@ CONTAINS
              test_name = 'HNO3'
           case( 'ALKOOH', 'MEKOOH', 'TOLOOH', 'BENOOH', 'XYLOOH', 'SOGM','SOGI','SOGT','SOGB','SOGX' )
              test_name = 'CH3OOH'
-          case( 'SOA', 'SO4', 'CB1', 'CB2', 'OC1', 'OC2', 'NH3', 'NH4', 'SA1', 'SA2', 'SA3', 'SA4','HCN','CH3CN','HCOOH' )
+          case( 'SOA', 'SO4', 'CB1', 'CB2', 'OC1', 'OC2', 'NH4', 'SA1', 'SA2', 'SA3', 'SA4','HCN','CH3CN','HCOOH' )
              test_name = 'OX'  ! this is just a place holder. values are explicitly set below
           case( 'SOAM', 'SOAI', 'SOAT', 'SOAB', 'SOAX' )
              test_name = 'OX'  ! this is just a place holder. values are explicitly set below
@@ -1326,10 +1326,7 @@ CONTAINS
           case( 'NH4NO3' )
              test_name = 'HNO3'
           ! Below add GEOS-Chem species or mappings
-          case( 'HCHO' )
-             test_name = 'CH2O'
-          ! Uncomment the following lines if you want to use the CESM default
-          ! Henry and oxidation factors, rather than the GEOS-Chem ones
+          ! Uncomment the following lines ...
           !case( 'ACET' )
           !    test_name = 'CH3COCH3'
           !case( 'ALD2' )
@@ -1350,6 +1347,31 @@ CONTAINS
           !    test_name = 'C10H16'
           !case( 'EOH' )
           !    test_name = 'C2H5OH'
+          !case( 'HCHO' )
+          !   test_name = 'CH2O'
+
+          ! ... and comment the following lines if you want to use the CESM default
+          ! Henry and oxidation factors, rather than the GEOS-Chem ones ...
+          case( 'H2O2' )
+             test_name = 'GC_H2O2'
+          case( 'HCHO' )
+             test_name = 'GC_CH2O'
+          case( 'CH2O' )
+             test_name = 'GC_CH2O'
+          case( 'NO2' )
+             test_name = 'GC_NO2'
+          case( 'HNO3' )
+             test_name = 'GC_HNO3'
+          case( 'NH3' )
+             test_name = 'GC_NH3'
+          case( 'N2O5' )
+             test_name = 'GC_N2O5'
+          case( 'PAN' )
+             test_name = 'GC_PAN'
+          case( 'SO2' )
+             test_name = 'GC_SO2'
+          ! Thibaud M. Fritz - 8/3/2020
+
           case( 'IEPOXA', 'IEPOXB', 'IEPOXD' )
               test_name = 'IEPOX'
           case( 'DST1', 'DSTAL1', 'NITD1', 'SO4D1' )
