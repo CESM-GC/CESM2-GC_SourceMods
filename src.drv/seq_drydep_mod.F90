@@ -36,7 +36,7 @@ module seq_drydep_mod
   ! !PRIVATE ARRAY SIZES
 
   integer, private, parameter :: maxspc = 100              ! Maximum number of species
-  integer, public,  parameter :: n_species_table = 247      ! Number of species to work with
+  integer, public,  parameter :: n_species_table = 251     ! Number of species to work with
   integer, private, parameter :: NSeas = 5                 ! Number of seasons
   integer, public,  parameter :: NLUse = 11                ! Number of land-use types
   integer, public,  parameter :: NPatch = 80               ! Number of patch types
@@ -475,6 +475,10 @@ module seq_drydep_mod
        ,0.0e+00_r8      & !SOAS      
        ,0.0e+00_r8      & !TSOA      
        ,0.0e+00_r8      & !TSOG      
+       ,0.0e+00_r8      & !MEK       
+       ,0.0e+00_r8      & !MP        
+       ,0.0e+00_r8      & !MPN       
+       ,0.0e+00_r8      & !PRPE      
        /)
 
   ! PRIVATE DATA:
@@ -739,6 +743,10 @@ module seq_drydep_mod
        ,'SOAS    '                       &
        ,'TSOA    '                       &
        ,'TSOG    '                       &
+       ,'MEK     '                       &
+       ,'MP      '                       &
+       ,'MPN     '                       &
+       ,'PRPE    '                       &
        /)
 
   !--- data for effective Henry's Law coefficient ---
@@ -944,7 +952,7 @@ module seq_drydep_mod
        ,0.00e+00_r8,    0._r8,0._r8     ,    0._r8,0._r8     ,    0._r8  & !NITs    
        ,0.00e+00_r8,    0._r8,0._r8     ,    0._r8,0._r8     ,    0._r8  & !NO2     
        ,1.10e+00_r8, 5500._r8,0._r8     ,    0._r8,0._r8     ,    0._r8  & !NPRNO3  
-       ,0.00e+00_r8,    0._r8,0._r8     ,    0._r8,0._r8     ,    0._r8  & !O3      
+       ,1.00e-02_r8,    0._r8,0._r8     ,    0._r8,0._r8     ,    0._r8  & !O3      
        ,0.00e+00_r8,    0._r8,0._r8     ,    0._r8,0._r8     ,    0._r8  & !OCPI    
        ,0.00e+00_r8,    0._r8,0._r8     ,    0._r8,0._r8     ,    0._r8  & !OCPO    
        ,0.00e+00_r8,    0._r8,0._r8     ,    0._r8,0._r8     ,    0._r8  & !OPOA1   
@@ -990,6 +998,10 @@ module seq_drydep_mod
        ,0.00e+00_r8,    0._r8,0._r8     ,    0._r8,0._r8     ,    0._r8  & !SOAS    
        ,0.00e+00_r8,    0._r8,0._r8     ,    0._r8,0._r8     ,    0._r8  & !TSOA    
        ,1.00e+05_r8, 6039._r8,0._r8     ,    0._r8,0._r8     ,    0._r8  & !TSOG    
+       ,1.82e+01_r8, 5700._r8,0._r8     ,    0._r8,0._r8     ,    0._r8  & !MEK     
+       ,2.94e+02_r8, 5200._r8,0._r8     ,    0._r8,0._r8     ,    0._r8  & !MP      
+       ,2.94e+02_r8, 5200._r8,0._r8     ,    0._r8,0._r8     ,    0._r8  & !MPN     
+       ,7.40e-03_r8, 3400._r8,0._r8     ,    0._r8,0._r8     ,    0._r8  & !PRPE    
        /)
 
   real(r8), private, parameter :: wh2o = SHR_CONST_MWWV
@@ -1043,7 +1055,8 @@ module seq_drydep_mod
        118.150000_r8, 118.150000_r8, 118.150000_r8, 90.090000_r8,  31.400000_r8,  &
        31.400000_r8,  35.450000_r8,  31.400000_r8,  31.400000_r8,  35.450000_r8,  &
        64.040000_r8,  31.400000_r8,  58.040000_r8,  118.150000_r8, 150.000000_r8, &
-       150.000000_r8, 150.000000_r8/)
+       150.000000_r8, 150.000000_r8, 12.000000_r8,  48.050000_r8,  93.050000_r8,  &
+       42.090000_r8 /)
 
 
   !===============================================================================
@@ -1245,7 +1258,10 @@ CONTAINS
        test_name = drydep_list(i)
 
        if( trim(test_name) == 'O3' ) then
-          test_name = 'OX'
+          ! CESM default
+          !test_name = 'OX'
+          ! GEOS-Chem
+          test_name = 'O3'
        end if
 
        !--- Figure out if species maps to a species in the species table ---
